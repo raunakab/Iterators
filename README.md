@@ -29,3 +29,10 @@ instead of doing the following over and over again:
 	for (; itr!=myList.end(); ++itr) if (searchForMe == *itr) /* do something */;
 
 This provided multiple advantages, the primary two being increased readability and decoupled code.
+Similarly, for more advanced operations, such as mappings, filtering, etc., will be require larger statements and logic.
+Also, re-writing the same code over and over again will lead to errors, which then may require multiple lines to be edited due to one mistake being copy-pasted.
+
+# Implementation
+Since the std::vector is a templated data type, these functions provided by the library would also require to be templated.
+Initially, all these functions were placed into a namespace, but namespaces cannot be templated.
+Therefore, the functions were made static and placed into a class which has its default-constructor, copy-constructor, and destructor declared privately.
