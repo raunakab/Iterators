@@ -1,10 +1,11 @@
 # Preface
-A simple C++ Library that provides abstractions to common operations that are performed on the Standard Library's std::vector data type.
+A simple C++ library that provides abstractions to common operations that are performed on the Standard Library's std::vector data type.
 
 # Introduction
 Racket is a functional programming language which is a dialect of Lisp (which stands for LISt Processor).
 Racket has support for very intuitive operations that can be performed on lists, such as length, map, andmap, ormap, foldl, etc.
 These functions allow for simple function calls on lists to return a meaningful property about it.
+
 This library aims to mimic Racket's list operators to work for the std::vector data type.
 A comprehensive list of all the functions provided by this library will be provided further down this README.
 
