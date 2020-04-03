@@ -1,7 +1,11 @@
-# PURPOSE
+# Introduction
+A simple C++ API Library that provides abstractions to common operations that are performed on the Standard Library's std::vector data type.
+
+# Purpose
 A recent project required the usage of the Standard Library's Vector class.
 While utilizing this data type, multiple operations needed to be performed on the vector, such as "Does this list contain x?", "I want to map every element in this vector to another data type.", etc.
 As the project grew in size, a lot of code started being copied over and over again.
+
 I thought that this would be the perfect usage for a library of functions which abstract away these requests into simple function calls.
 For example, if I wanted to check if a vector contained an element, I would perform the falling function invocation:
 
