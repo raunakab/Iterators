@@ -1,4 +1,4 @@
-#PURPOSE
+# PURPOSE
 A recent project required the usage of the Standard Library's Vector class.
 While utilizing this data type, multiple operations needed to be performed on the vector, such as "Does this list contain x?", "I want to map every element in this vector to another data type.", etc.
 As the project grew in size, a lot of code started being copied over and over again.
