@@ -35,4 +35,5 @@ Also, re-writing the same code over and over again will lead to errors, which th
 # Implementation
 Since the std::vector is a templated data type, these functions provided by the library would also require to be templated.
 Initially, all these functions were placed into a namespace, but namespaces cannot be templated.
-Therefore, the functions were made static and placed into a class which has its default-constructor, copy-constructor, and destructor declared privately.
+Therefore, the functions were made static and placed into a class which had its default-constructor, copy-constructor, and destructor declared privately.
+This was done becaues classes can be templated.
