@@ -24,7 +24,7 @@ template<class T> class Iterators {
         static                   std::vector<T>         * const filter      (std::vector<T> const & inputs, bool const (* const f)(T const &));
         template<class U> static std::vector<U>         * const map         (std::vector<T> const & inputs, U    const (* const f)(T const &));
         static                   void                           apply       (std::vector<T> const & inputs, void       (* const f)(T const &));
-        static                   void                           insert      (std::vector<T const>       & inputs, T    const & t, int const i);
+        static                   void                           insert      (std::vector<T>       & inputs, T    const & t, int const i);
         static                   bool                     const setInsert   (std::vector<T>       & inputs, T    const & t, int const i);
         static                   void                           remove      (std::vector<T>       & inputs, T    const & t);
         template<class U> static std::vector<T>         * const remove      (std::vector<T> const & inputs, U    const & u, U const (* const f)(T const &));
@@ -285,7 +285,7 @@ template<class T> void Iterators<T>::apply(std::vector<T> const & inputs, void (
  *      Negative indices are also allowed.
  *      An index of -1 indicates to insert at the very last position, -2 at the second last position, etc.
 */
-template<class T> void Iterators<T>::insert(std::vector<T const> & inputs, T const & t, int const i) {
+template<class T> void Iterators<T>::insert(std::vector<T> & inputs, T const & t, int const i) {
     int const x = ((i >= 0) ? POSITIVE : NEGATIVE);
     int const size = inputs.size();
     
@@ -387,27 +387,30 @@ template<class T> void Iterators<T>::remove(std::vector<T> & inputs, T const & t
 }
 
 /*
- *  @param_1: std::vector<T> &
- *      A reference to the constant T-template inputs being searched through.
- *      The list can be modified, although the elements inside the list themselves cannot be.
- *  @param_2: T const &
- *      The element to insert into @param_1.
+ *  @param_1: std::vector<T> const &
+ *      A constant reference to a list of T-templated inputs.
+ *      This list cannot be modified.
+ *  @param_2: U const &
+ *      A constant element of type U.
  *      This element cannot be modified.
- *  @param_3: int const
- *      The index at which to insert the element into the list.
- *      Can be any positive or negative integer.
- *      This index cannot be modified.
+ *  @param_3: U const (* const f)(T const &)
+ *      A constant pointer to a function that takes in an object of type T and returns an object of type U.
+ *      
  *
  *  @requirement(s):
  *      n/a.
  *
  *  @returns:
- *      An rvalue constant boolean.
- *      Returns true if the element was successfully inserted; false otherwise.
+ *      An rvalue pointer to a new T-templated std::vector.
+ *      The new std::vector will contain all elements except the elements in @param_1 that, once passed into a function, returned a value that was equal to @param_2.
+ *      Note that, since a new list is being constructed, the copy constructor has to be invoked for every added element for whatever data type was passed in.
  *
  *  @usage:
- *      Used to remove all the elements in @param_1 that equal @param_2.
- *      In order to make the comparison, is T.operator==(T const &) is invoked.
+ *      The comparison of the returned object and @param_2 is done using T.operator==(T const &).
+ *      For example, consider an object data type, A, that contains a pointer to another object data type, B (where B could be A).
+ *      A use case could be to remove all the A objects inside of a std::vector that contain a pointer to a particular B instance.
+ *      The list of A objects can be passed in as @param_1, the B object pointer as @param_2, and a function that can properly dereference an A object to retrieve its B pointer as @param_3.
+ *      After evaluation of this function, all the A objects in @param_1 that point @param_2 would be removed.
 */
 template<class T> template<class U> std::vector<T> * const Iterators<T>::remove(std::vector<T> const & inputs, U const & u, U const (* const f)(T const &)) {
     if (!f) return;
@@ -424,6 +427,24 @@ template<class T> template<class U> std::vector<T> * const Iterators<T>::remove(
 
     // return;
 }
+
+/*
+ *  @param_1: std::vector<T> &
+ *      A reference to the constant T-template inputs being searched through.
+ *      The list can be modified, although the elements inside the list themselves cannot be.
+ *  @param_2: void (* const f)(T &, T const &)
+ *      A constant pointer to a function which takes two objects of type T and performs an operation on them and stores it in the first object.
+ *
+ *  @requirement(s):
+ *      n/a.
+ *
+ *  @returns:
+ *      An rvalue constant pointer to an object of type T.
+ *
+ *  @usage:
+ *      Useful to compute an aggregated expression from a list of T-templated objects.
+ *      For example, can be used to compute the sum of a list of integers.
+*/
 template<class T> T * const Iterators<T>::accumulate(std::vector<T> const & inputs, void (* const f)(T &, T const &)) {
     if ((!f) || (inputs.size() <= 1)) return nullptr;
 
@@ -450,4 +471,45 @@ template<class T> std::vector<T> * const Iterators<T>::dereference(std::vector<T
 template<class T> template<class U> bool const Iterators<T>::contains(std::vector<T> const & inputs, U const & u, U const (* const f)(T const &)) {
     std::vector<U> * const transformed = Iterators<T>::map<U>(inputs,f);
     return Iterators<U *>::contains(*transformed,u);
+}
+/*
+ *  @param_1: std::vector<T> const &
+ *      A constant reference to a list of T-templated inputs.
+ *      This list cannot be modified.
+ *  @param_2: U const &
+ *      A constant element of type U.
+ *      This element cannot be modified.
+ *  @param_3: U const (* const f)(T const &)
+ *      A constant pointer to a function that takes in an object of type T and returns an object of type U.
+ *      
+ *
+ *  @requirement(s):
+ *      n/a.
+ *
+ *  @returns:
+ *      An rvalue pointer to a new T-templated std::vector.
+ *      The new std::vector will contain all elements except the elements in @param_1 that, once passed into a function, returned a value that was equal to @param_2.
+ *      Note that, since a new list is being constructed, the copy constructor has to be invoked for every added element for whatever data type was passed in.
+ *
+ *  @usage:
+ *      The comparison of the returned object and @param_2 is done using T.operator==(T const &).
+ *      For example, consider an object data type, A, that contains a pointer to another object data type, B (where B could be A).
+ *      A use case could be to remove all the A objects inside of a std::vector that contain a pointer to a particular B instance.
+ *      The list of A objects can be passed in as @param_1, the B object pointer as @param_2, and a function that can properly dereference an A object to retrieve its B pointer as @param_3.
+ *      After evaluation of this function, all the A objects in @param_1 that point @param_2 would be removed.
+*/
+template<class T> template<class U> std::vector<T> * const Iterators<T>::remove(std::vector<T> const & inputs, U const & u, U const (* const f)(T const &)) {
+    if (!f) return;
+
+    std::vector<T *> * const ret = new std::vector<T *>();
+    typename std::vector<T>::const_iterator
+    
+
+    // typename std::vector<T>::iterator itr(inputs.begin());
+    // for (; itr!=inputs.end(); ++itr) if (u == *f(*itr)) {
+    //     inputs.erase(itr);
+    //     --itr;
+    // }
+
+    // return;
 }
