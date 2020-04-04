@@ -455,6 +455,23 @@ template<class T> T * const Iterators<T>::accumulate(std::vector<T> const & inpu
 
     return *t;
 }
+
+/*
+ *  @param_1: std::vector<T *> const &
+ *      A constant reference to a std::vector of pointers to objects of type T.
+ *      The list cannot be modified.
+ *
+ *  @requirement(s):
+ *      n/a.
+ *
+ *  @returns:
+ *      A constant rvalue pointer to a newly constructed list of objects of type T.
+ *      This list is exactly the same as the inputted list, but each pointer has been dereferenced.
+ *      Note that, since the pointers have to be dereferenced, the copy-constructor has to be invoked n-number of times, where n is the size of the input list.
+ *
+ *  @usage:
+ *      Used to dereference a list of pointers to T-type objects to a list of T-type objects.
+*/
 template<class T> std::vector<T> * const Iterators<T>::dereference(std::vector<T *> const & inputs) {
     std::vector<T> * const ret = new std::vector<T>();
     typename std::vector<T *>::const_iterator const_itr(inputs.begin());
