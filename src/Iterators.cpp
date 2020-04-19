@@ -26,7 +26,7 @@ template<class T> class Iterators {
         static                   void                           apply       (std::vector<T> const & inputs, void       (* const f)(T const &));
         static                   void                           insert      (std::vector<T>       & inputs, T    const & t, int const i);
         static                   bool                     const setInsert   (std::vector<T>       & inputs, T    const & t, int const i);
-        static                   void                           remove      (std::vector<T>       & inputs, T    const & t);
+        static                   bool                     const remove      (std::vector<T>       & inputs, T    const & t);
         template<class U> static std::vector<T>         * const remove      (std::vector<T> const & inputs, U    const & u, U const (* const f)(T const &));
         static                   T                      * const accumulate  (std::vector<T> const & inputs, void       (* const f)(T &, T const &));
         static                   std::vector<T>         * const dereference (std::vector<T *> const & inputs);
@@ -379,53 +379,16 @@ template<class T> bool const Iterators<T>::setInsert(std::vector<T> & inputs, T 
  *      Used to remove all the elements in @param_1 that equal @param_2.
  *      In order to make the comparison, is T.operator==(T const &) is invoked.
 */
-template<class T> void Iterators<T>::remove(std::vector<T> & inputs, T const & t) {
-    typename std::vector<T>::iterator temp(std::remove(inputs.begin(), inputs.end(), t));
-    inputs.erase(temp,inputs.end());
+template<class T> bool const Iterators<T>::remove(std::vector<T> & inputs, T const & t) {
+    typename std::vector<T>::iterator ender(inputs.end());
+    typename std::vector<T>::iterator temp(std::remove(inputs.begin(),ender,t));
 
-    return;
-}
+    if (temp != ender) {
+        inputs.erase(temp,ender);
+        return true;
+    }
 
-/*
- *  @param_1: std::vector<T> const &
- *      A constant reference to a list of T-templated inputs.
- *      This list cannot be modified.
- *  @param_2: U const &
- *      A constant element of type U.
- *      This element cannot be modified.
- *  @param_3: U const (* const f)(T const &)
- *      A constant pointer to a function that takes in an object of type T and returns an object of type U.
- *      
- *
- *  @requirement(s):
- *      n/a.
- *
- *  @returns:
- *      An rvalue pointer to a new T-templated std::vector.
- *      The new std::vector will contain all elements except the elements in @param_1 that, once passed into a function, returned a value that was equal to @param_2.
- *      Note that, since a new list is being constructed, the copy constructor has to be invoked for every added element for whatever data type was passed in.
- *
- *  @usage:
- *      The comparison of the returned object and @param_2 is done using T.operator==(T const &).
- *      For example, consider an object data type, A, that contains a pointer to another object data type, B (where B could be A).
- *      A use case could be to remove all the A objects inside of a std::vector that contain a pointer to a particular B instance.
- *      The list of A objects can be passed in as @param_1, the B object pointer as @param_2, and a function that can properly dereference an A object to retrieve its B pointer as @param_3.
- *      After evaluation of this function, all the A objects in @param_1 that point @param_2 would be removed.
-*/
-template<class T> template<class U> std::vector<T> * const Iterators<T>::remove(std::vector<T> const & inputs, U const & u, U const (* const f)(T const &)) {
-    if (!f) return;
-
-    std::vector<T *> * const ret = new std::vector<T *>();
-    typename std::vector<T>::const_iterator
-    
-
-    // typename std::vector<T>::iterator itr(inputs.begin());
-    // for (; itr!=inputs.end(); ++itr) if (u == *f(*itr)) {
-    //     inputs.erase(itr);
-    //     --itr;
-    // }
-
-    // return;
+    return false;
 }
 
 /*
@@ -516,10 +479,10 @@ template<class T> template<class U> bool const Iterators<T>::contains(std::vecto
  *      After evaluation of this function, all the A objects in @param_1 that point @param_2 would be removed.
 */
 template<class T> template<class U> std::vector<T> * const Iterators<T>::remove(std::vector<T> const & inputs, U const & u, U const (* const f)(T const &)) {
-    if (!f) return;
+    // if (!f) return;
 
-    std::vector<T *> * const ret = new std::vector<T *>();
-    typename std::vector<T>::const_iterator
+    // std::vector<T *> * const ret = new std::vector<T *>();
+    // typename std::vector<T>::const_iterator
     
 
     // typename std::vector<T>::iterator itr(inputs.begin());
