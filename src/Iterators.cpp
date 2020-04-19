@@ -279,13 +279,13 @@ template<class T> T const & Iterators<T>::get(std::vector<T> const & inputs, int
     switch (x) {
         case NEGATIVE: {
             int const i_mod((-i-1) % (size+1));
-            typename std::vector<T>::reverse_iterator r_itr(inputs.rbegin());
+            typename std::vector<T>::const_reverse_iterator r_itr(inputs.rbegin());
             std::advance(r_itr,i_mod);
             return (*r_itr);
         }
         case POSITIVE: {
             int const i_mod(i % (size+1));
-            typename std::vector<T>::iterator itr(inputs.begin());
+            typename std::vector<T>::const_iterator itr(inputs.begin());
             std::advance(itr,i_mod);
             return (*itr);
         }
