@@ -15,21 +15,22 @@ template<class T> class Iterators {
         ~Iterators();
 
     public:
-        static                   bool                     const contains    (std::vector<T> const & inputs, T    const & t);
-        template<class U> static bool                     const contains    (std::vector<T> const & inputs, U    const & u, U const (* const f)(T const &));
-        static                   bool                     const comparator  (std::vector<T> const & inputs, bool const (* const f)(T const &, T const &));
-        static                   bool                     const ormap       (std::vector<T> const & inputs, bool const (* const f)(T const &));
-        static                   bool                     const andmap      (std::vector<T> const & inputs, bool const (* const f)(T const &));
+        static                   bool                     const contains    (std::vector<T> const &, T    const &);
+        template<class U> static bool                     const contains    (std::vector<T> const &, U    const &, U const (* const)(T const &));
+        static                   bool                     const comparator  (std::vector<T> const &, bool const (* const)(T const &, T const &));
+        static                   bool                     const ormap       (std::vector<T> const &, bool const (* const)(T const &));
+        static                   bool                     const andmap      (std::vector<T> const &, bool const (* const)(T const &));
         // static                   std::vector<T const *> * const filter      (std::vector<T> const & inputs, bool const (* const f)(T const &));
-        static                   std::vector<T>         * const filter      (std::vector<T> const & inputs, bool const (* const f)(T const &));
-        template<class U> static std::vector<U>         * const map         (std::vector<T> const & inputs, U    const (* const f)(T const &));
-        static                   void                           apply       (std::vector<T> const & inputs, void       (* const f)(T const &));
-        static                   void                           insert      (std::vector<T>       & inputs, T    const & t, int const i);
-        static                   bool                     const setInsert   (std::vector<T>       & inputs, T    const & t, int const i);
-        static                   bool                     const remove      (std::vector<T>       & inputs, T    const & t);
-        template<class U> static std::vector<T>         * const remove      (std::vector<T> const & inputs, U    const & u, U const (* const f)(T const &));
-        static                   T                      * const accumulate  (std::vector<T> const & inputs, void       (* const f)(T &, T const &));
-        static                   std::vector<T>         * const dereference (std::vector<T *> const & inputs);
+        static                   std::vector<T>         * const filter      (std::vector<T> const &, bool const (* const)(T const &));
+        template<class U> static std::vector<U>         * const map         (std::vector<T> const &, U    const (* const)(T const &));
+        static                   void                           apply       (std::vector<T> const &, void       (* const)(T const &));
+        static                   T                      const & get         (std::vector<T> const &, int const);
+        static                   void                           insert      (std::vector<T>       &, T    const &, int const);
+        static                   bool                     const setInsert   (std::vector<T>       &, T    const &, int const);
+        static                   bool                     const remove      (std::vector<T>       &, T    const &);
+        template<class U> static std::vector<T>         * const remove      (std::vector<T> const &, U    const &, U const (* const)(T const &));
+        static                   T                      * const accumulate  (std::vector<T> const &, void       (* const)(T &, T const &));
+        static                   std::vector<T>         * const dereference (std::vector<T *> const &);
 };
 
 
@@ -259,6 +260,36 @@ template<class T> void Iterators<T>::apply(std::vector<T> const & inputs, void (
     for (; const_itr!=inputs.end(); ++const_itr) f(*const_itr);
 
     return;
+}
+
+/*
+ *  @param_1:
+ *  @param_2:
+ *
+ *  @requirement(s):
+ *
+ *  @returns:
+ *
+ *  @usage:
+*/
+template<class T> T const & Iterators<T>::get(std::vector<T> const & inputs, int const i) {
+    int const x((i >= 0) ? POSITIVE : NEGATIVE);
+    int const size(inputs.size());
+    
+    switch (x) {
+        case NEGATIVE: {
+            int const i_mod((-i-1) % (size+1));
+            typename std::vector<T>::reverse_iterator r_itr(inputs.rbegin());
+            std::advance(r_itr,i_mod);
+            return (*r_itr);
+        }
+        case POSITIVE: {
+            int const i_mod(i % (size+1));
+            typename std::vector<T>::iterator itr(inputs.begin());
+            std::advance(itr,i_mod);
+            return (*itr);
+        }
+    }
 }
 
 /*
